@@ -94,10 +94,10 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN2_Init();
   MX_TIM8_Init();
-//  MX_CAN1_Init();
+  //  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
   uint8_t DJ_Init_i_;
-  for (DJ_Init_i_ = 1; DJ_Init_i_ < USE_M2006_NUM; DJ_Init_i_++)
+  for (DJ_Init_i_ = 0; DJ_Init_i_ < USE_M2006_NUM; DJ_Init_i_++)
     DJMotor_Init(&DJMotors[DJ_Init_i_], DJ_Init_i_ + 1, DJM2006);
   for (; DJ_Init_i_ < USE_M3508_NUM; DJ_Init_i_++)
     DJMotor_Init(&DJMotors[DJ_Init_i_], DJ_Init_i_ + 1, DJM3508);

@@ -14,10 +14,10 @@
 #include "pid.h"
 /*=========================================宏定义==========================================================*/
 #ifndef USE_M2006_NUM //  定义是否使用M2006电机的数量，默认为4
-#define USE_M2006_NUM 4
+#define USE_M2006_NUM 2
 #endif
 #ifndef USE_M3508_NUM //  定义是否使用M3508电机的数量，默认为0
-#define USE_M3508_NUM 0
+#define USE_M3508_NUM 1
 #endif
 #define USE_DJ_NUM (USE_M2006_NUM + USE_M3508_NUM) //  定义使用的电机总数，为M2006和M3508电机数量之和
 #define M2006_RATIO (float)36

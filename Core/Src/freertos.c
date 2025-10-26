@@ -21,7 +21,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -63,7 +63,14 @@ osThreadId_t WriteControlTaskHandle;
 void WriteControlTask(void *argument);
 const osThreadAttr_t WriteControlTask_attributes = {
     .name = "WriteControlTask",
-    .stack_size = 96 * 4,
+    .stack_size = 95 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
+};
+osThreadId_t ActionTaskHandle;
+void ActionTask(void *argument);
+const osThreadAttr_t ActionTask_attributes = {
+    .name = "ActionTask",
+    .stack_size = 128 * 4,
     .priority = (osPriority_t)osPriorityNormal,
 };
 /* USER CODE END FunctionPrototypes */
@@ -101,12 +108,13 @@ void MX_FREERTOS_Init(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  // defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-WriteControlTaskHandle = osThreadNew(WriteControlTask, NULL, &WriteControlTask_attributes);
+  WriteControlTaskHandle = osThreadNew(WriteControlTask, NULL, &WriteControlTask_attributes);
+  ActionTaskHandle = osThreadNew(ActionTask, NULL, &ActionTask_attributes);
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
@@ -125,7 +133,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osDelay(9);
+    osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -140,8 +148,8 @@ void WriteControlTask(void *argument)
   {
     if (start_flag && write_flag)
     {
-      static int8_t left_or_right=1;
-			write_flag=0;
+      static int8_t left_or_right = 1;
+      write_flag = 0;
       for (uint8_t i = 0; i < 2; i++)
       {
         DJMotorPtr motorp = &DJMotors[i];
@@ -150,6 +158,25 @@ void WriteControlTask(void *argument)
       }
     }
     /* 周期为 10ms，可根据需要调整 */
+    vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(20));
+  }
+}
+void ActionTask(void *argument)
+{
+  TickType_t last_wake_time = xTaskGetTickCount();
+  for (;;)
+  {
+    if (reachout_flag == true)
+    {
+      DJMotors[2].valueSet.angle = pos2angle(stroke_pos);
+      reachout_flag = false;
+    }
+    else if (retract_flag == true)
+    {
+      DJMotors[2].valueSet.angle = -pos2angle(stroke_pos);
+      reachout_flag = false;
+    }
+
     vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(20));
   }
 }
