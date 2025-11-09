@@ -115,8 +115,10 @@ void MX_CAN2_Init(void)
   filter.FilterFIFOAssignment = CAN_RX_FIFO0,
   filter.FilterActivation = ENABLE,
   filter.SlaveStartFilterBank = 14;
-  HAL_CAN_ConfigFilter(&hcan2, &filter);
-  HAL_CAN_Start(&hcan2);
+  if(HAL_CAN_ConfigFilter(&hcan2, &filter)!=HAL_OK){
+	Error_Handler();}
+		if(HAL_CAN_Start(&hcan2)!=HAL_OK)
+{Error_Handler();}
   HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
 
   /* USER CODE END CAN2_Init 2 */

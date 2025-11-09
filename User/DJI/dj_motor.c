@@ -169,12 +169,12 @@ void DJMotor_Zero_Mode(DJMotorPtr motorp)
 
     if (ABS(motorp->valueNow.pulsedistance) < ZERO_DISTANCE_THRESHOLD)
     {
-        if (motorp->conter.zeroCnt++ > 100)
+        if (motorp->conter.zeroCnt++ > 25)
         {
             motorp->conter.zeroCnt = 0;
             motorp->status.isArrived = true;
-            motorp->motorMode = Disable;
             Set_Zero(motorp);
+            motorp->motorMode = Enable;
         }
     }
 }

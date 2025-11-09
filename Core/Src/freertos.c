@@ -153,7 +153,7 @@ void WriteControlTask(void *argument)
       for (uint8_t i = 0; i < 2; i++)
       {
         DJMotorPtr motorp = &DJMotors[i];
-        motorp->valueSet.speed = (int16_t)signum(left_or_right) * control_speed;
+        motorp->valueSet.speed = -(int16_t)signum(left_or_right) * control_speed;
         left_or_right = -left_or_right;
       }
     }
@@ -168,13 +168,43 @@ void ActionTask(void *argument)
   {
     if (reachout_flag == true)
     {
-      DJMotors[2].valueSet.angle = pos2angle(stroke_pos);
+      // DJMotors[2].status.findZeroDir = 0;
+      // DJMotors[2].motorMode = Zero;
+			control_speed = 1500;
+			 write_flag = 1;
+      DJMotors[2].valueSet.angle = -pos2angle(stroke_pos);
       reachout_flag = false;
     }
     else if (retract_flag == true)
     {
+      // DJMotors[2].status.findZeroDir = 1;
+      // DJMotors[2].motorMode = Zero;
+			control_speed = 1500;
+			 write_flag = 1;
+      DJMotors[2].valueSet.angle = 0;
+      retract_flag = false;
+    }
+    if (action_falg == true)
+    {
+      // DJMotors[2].status.findZeroDir = 0;
+      // DJMotors[2].motorMode = Zero;
+			control_speed = 1500;
+			 write_flag = 1;
       DJMotors[2].valueSet.angle = -pos2angle(stroke_pos);
-      reachout_flag = false;
+      osDelay(7500);
+      // DJMotors[2].status.findZeroDir = 1;
+      // DJMotors[2].motorMode = Zero;
+      DJMotors[2].valueSet.angle = 0;
+			osDelay(7500);
+//			DJMotors[2].valueSet.angle = -pos2angle(stroke_pos);
+//			osDelay(5000);
+//			control_speed = -1000;
+//			 write_flag = 1;
+//			osDelay(3000);
+//			DJMotors[2].valueSet.angle = 0;
+			control_speed = 0;
+			 write_flag = 1;
+      action_falg = false;
     }
 
     vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(20));

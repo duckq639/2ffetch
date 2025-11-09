@@ -97,10 +97,9 @@ int main(void)
   //  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
   uint8_t DJ_Init_i_;
-  for (DJ_Init_i_ = 0; DJ_Init_i_ < USE_M2006_NUM; DJ_Init_i_++)
+  for (DJ_Init_i_ = 1; DJ_Init_i_ < 2; DJ_Init_i_--)
     DJMotor_Init(&DJMotors[DJ_Init_i_], DJ_Init_i_ + 1, DJM2006);
-  for (; DJ_Init_i_ < USE_M3508_NUM; DJ_Init_i_++)
-    DJMotor_Init(&DJMotors[DJ_Init_i_], DJ_Init_i_ + 1, DJM3508);
+    DJMotor_Init(&DJMotors[2], 4, DJM3508);
   friction_init();
   /* USER CODE END 2 */
 
